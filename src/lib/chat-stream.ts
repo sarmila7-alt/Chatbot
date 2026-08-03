@@ -20,7 +20,11 @@ export async function streamChat({
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        // Supabase's new key format (sb_publishable_...) is NOT a JWT, so it
+        // must go in the `apikey` header, not `Authorization: Bearer`.
+        // Sending it as a Bearer token gets rejected by Supabase's
+        // platform-level verify_jwt check before our function code even runs.
+        apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
       },
       body: JSON.stringify({ messages }),
       signal,
